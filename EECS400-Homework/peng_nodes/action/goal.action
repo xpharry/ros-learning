@@ -1,0 +1,9 @@
+#goal definition
+float64 amplitude
+float64 frequency
+int64 ncycles
+---
+#result definition
+int64 goal_stamp
+---
+#feedback

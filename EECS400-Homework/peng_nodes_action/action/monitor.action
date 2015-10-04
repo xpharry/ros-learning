@@ -1,0 +1,11 @@
+#goal definition
+float64 amplitude
+float64 frequency
+int64 ncycles
+---
+#result definition
+float64 amplitude
+float64 frequency
+int64 ncycles
+---
+#feedback

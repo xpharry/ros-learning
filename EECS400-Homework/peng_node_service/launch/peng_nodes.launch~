@@ -1,0 +1,6 @@
+<launch> 
+<node name= "minimal_commander" pkg= "peng_nodes" type= "minimal_commander" /> 
+<node name= "minimal_subscriber" pkg= "peng_nodes" type= "minimal_subscriber" /> 
+<node name= "minimal_controller" pkg= "peng_nodes" type= "minimal_controller" /> 
+<node name= "minimal_simulator" pkg= "peng_nodes" type= "minimal_simulator" /> 
+</launch> 

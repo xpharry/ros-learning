@@ -1,0 +1,180 @@
+#include <ros/ros.h>
+#include <std_msgs/Float64.h>
+#include <math.h>
+#include <sstream>
+
+#include <actionlib/server/simple_action_server.h>
+#include <peng_nodes_action/monitorAction.h>
+
+double PI = 3.1415926;
+int g_count = -1;
+
+
+class monitorActionServer {
+
+private:
+
+    ros::NodeHandle nh_;  // we'll need a node handle; get one upon instantiation
+
+    // this class will own a "SimpleActionServer" called "as_".
+    // it will communicate using messages defined in peng_nodes_action/action/monitor.action
+    // the type "monitorAction" is auto-generated from our name "monitor" and generic name "Action"
+    actionlib::SimpleActionServer<peng_nodes_action::monitorAction> as_;
+    
+    // here are some message types to communicate with our client(s)
+    peng_nodes_action::monitorGoal goal_; // goal message, received from client
+    peng_nodes_action::monitorResult result_; // put results here, to be sent back to the client when done w/ goal
+    peng_nodes_action::monitorFeedback feedback_; // not used in this example; 
+    // would need to use: as_.publishFeedback(feedback_); to send incremental feedback to the client
+
+public:
+    double amplitude;
+    double frequency;
+    int ncycles;
+
+    monitorActionServer();
+
+    ~monitorActionServer(void) {
+    }
+    // Action Interface
+    void executeCB(const actionlib::SimpleActionServer<peng_nodes_action::monitorAction>::GoalConstPtr& goal);
+
+
+};
+
+//implementation of the constructor:
+// member initialization list describes how to initialize member as_
+// member as_ will get instantiated with specified node-handle, name by which this server will be known,
+//  a pointer to the function to be executed upon receipt of a goal.
+//  
+// Syntax of naming the function to be invoked: get a pointer to the function, called executeCB, which is a member method
+// of our class exampleActionServer.  Since this is a class method, we need to tell boost::bind that it is a class member,
+// using the "this" keyword.  the _1 argument says that our executeCB takes one argument
+// the final argument  "false" says don't start the server yet.  (We'll do this in the constructor)
+
+monitorActionServer::monitorActionServer() :
+   as_(nh_, "monitor_action", boost::bind(&monitorActionServer::executeCB, this, _1),false) 
+// in the above initialization, we name the server "monitor_action"
+//  clients will need to refer to this name to connect with this server
+{
+    amplitude = goal_.amplitude;
+    frequency = goal_.frequency;
+    ncycles = goal_.ncycles;
+
+    ROS_INFO("in constructor of exampleActionServer...");
+    // do any other desired initializations here...specific to your implementation
+
+    as_.start(); //start the server running
+}
+
+//executeCB implementation: this is a member method that will get registered with the action server
+// argument type is very long.  Meaning:
+// actionlib is the package for action servers
+// SimpleActionServer is a templated class in this package (defined in the "actionlib" ROS package)
+// <peng_nodes_action::monitorAction> customizes the simple action server to use our own "action" message 
+// defined in our package, "peng_nodes_action", in the subdirectory "action", called "monitor.action"
+// The name "monitor" is prepended to other message types created automatically during compilation.
+// e.g.,  "monitorAction" is auto-generated from (our) base name "monitor" and generic name "Action"
+void monitorActionServer::executeCB(const actionlib::SimpleActionServer<peng_nodes_action::monitorAction>::GoalConstPtr& goal) {
+    ROS_INFO("in executeCB");
+    ROS_INFO("goal->amplitude is: %f", goal->amplitude);
+    ROS_INFO("goal->frequency is: %f", goal->frequency);
+    ROS_INFO("goal->ncycles is: %ld", goal->ncycles);
+    //do work here: this is where your interesting code goes
+
+    goal_.amplitude = goal->amplitude;
+    goal_.frequency = goal->frequency;
+    goal_.ncycles = goal->ncycles;
+    
+    amplitude = goal->amplitude;
+    frequency = goal->frequency;
+
+    // for illustration, populate the "result" message with two numbers:
+    // the "input" is the message count, copied from goal->input (as sent by the client)
+    // the "goal_stamp" is the server's count of how many goals it has serviced so far
+    // if there is only one client, and if it is never restarted, then these two numbers SHOULD be identical...
+    // unless some communication got dropped, indicating an error
+    // send the result message back with the status of "success"
+
+    result_.amplitude = goal->amplitude; // we'll use the member variable result_, defined in our class
+    result_.frequency = goal->frequency;
+
+    result_.ncycles = g_count;
+    
+    // the class owns the action server, so we can use its member methods here
+   
+    // DEBUG: if client and server remain in sync, all is well--else whine and complain and quit
+    // NOTE: this is NOT generically useful code; server should be happy to accept new clients at any time, and
+    // no client should need to know how many goals the server has serviced to date
+
+    //ROS_INFO("goal succeeded");
+    ROS_INFO("result_.ncycles = %ld; goal->ncycles = %ld", result_.ncycles, goal->ncycles);
+    as_.setSucceeded(result_); // tell the client that we were successful acting on the request, and return the "result" message
+}
+
+int main(int argc, char **argv) {
+    ros::init(argc, argv, "minimal_commander"); // name of this node will be "minimal_"
+    ros::NodeHandle n; // two lines to create a publisher object that can talk to ROS
+    ros::Publisher pub = n.advertise<std_msgs::Float64>("vel_cmd", 1000); 
+    //"vel_cmd" is the name of the topic to which we will publish
+    // the "1000" argument says to use a buffer size of 1000; could make larger, if expect network backups
+    
+    std_msgs::Float64 velocity; //create a variable of type "Float64",
+    // as defined in: /opt/ros/indigo/share/std_msgs
+    // any message published on a ROS topic must have a pre-defined format, 
+    // so subscribers know how to interpret the serialized data transmission
+
+    ROS_INFO("instantiating the monitor action server: ");
+
+    monitorActionServer as_object; // create an instance of the class "monitorActionServer"
+
+    double amplitude;
+    double frequency;
+    int ncycles;
+    int i = 0;
+    double old_phi = 0;
+    double phi = 0;
+
+    ros::Rate naptime(10.0); //create a ros object from the ros “Rate” class; 
+    //set the sleep timer for 1Hz repetition rate (arg is in units of Hz)
+    
+    // do work here in infinite loop (desired for this example), but terminate if detect ROS has faulted
+    while (ros::ok()) 
+    {
+        amplitude = as_object.amplitude;
+        frequency = as_object.frequency;
+        ncycles = as_object.ncycles;
+
+        // ROS_INFO("MAIN amplitude is: %f", amplitude);
+        // ROS_INFO("MAIN frequency is: %f", frequency);
+        // ROS_INFO("MAIN ncycles is: %d", ncycles);
+
+        // this loop has no sleep timer, and thus it will consume excessive CPU time
+        // expect one core to be 100% dedicated (wastefully) to this small task
+        phi = frequency*PI/180*i;//phase increment by frequency*PI/180 radius each iteration
+        velocity.data = amplitude*sin(phi);
+
+        if(phi - old_phi>=2*PI) {
+            ROS_INFO("One signle cycle passed");
+            g_count++;
+            old_phi = phi;
+        }
+        i++;
+
+        if (amplitude == 0) {
+            g_count = -1;
+        }
+
+        //ROS_INFO("PHASE data %f", phi);
+        ROS_INFO("Sending velocity = %f", velocity.data);
+        pub.publish(velocity); // publish the value--of type Float64-- 
+
+        ros::spinOnce();
+
+        //to the topic "topic1"
+        //the next line will cause the loop to sleep for the balance of the desired period 
+        // to achieve the specified loop frequency 
+        naptime.sleep(); 
+    }
+}
+

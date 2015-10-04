@@ -1,0 +1,4 @@
+<launch>  
+<node name= "minimal_controller" pkg= "peng_nodes_action" type= "minimal_controller" /> 
+<node name= "minimal_simulator" pkg= "peng_nodes_action" type= "minimal_simulator" /> 
+</launch> 
