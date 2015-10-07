@@ -1,0 +1,4 @@
+<launch> 
+<node name= "joint1_commander" pkg= "peng_nodes" type= "joint1_commander" /> 
+<node name= "joint1_controller" pkg= "peng_nodes" type= "joint1_controller" /> 
+</launch> 

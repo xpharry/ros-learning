@@ -22,19 +22,19 @@ operations:
 
 		cd ~/catkin_ws/src/minimal_robot_description
 
-	   	rosrun gazebo_ros spawn_model -file minimal_robot_description.urdf -urdf -model one_DOF_robo
+	4. rosrun gazebo_ros spawn_model -file minimal_robot_description.urdf -urdf -model one_DOF_robo
 
-			check in gazebo
+		check in gazebo
 
-	*4. rosservice call /gazebo/get_joint_properties "joint1" # check the joint1 properties
+	*5. rosservice call /gazebo/get_joint_properties "joint1" # check the joint1 properties
 
-	5. rostopic pub pos_cmd std_msgs/Float64 1.0 
+	6. rostopic pub pos_cmd std_msgs/Float64 1.0 
 
 		check in gazebo & rqtplot
 
 	   rqt_plot
 
-	6 Dislay in rviz:
+	7. Dislay in rviz:
 
 		1) roslaunch minimal_robot_description minimal_robot_description.launch
 
