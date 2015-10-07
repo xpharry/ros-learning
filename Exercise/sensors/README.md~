@@ -28,4 +28,10 @@ procedures:
 
 	9 rostopic pub pos_cmd std_msgs/Float64 0.5
 
+there is some problem in rviz showing!!
+
+	PointCloud2: transform
+
+		Solved: need to add TF
+
 	

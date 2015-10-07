@@ -32,4 +32,7 @@ there is some problem in rviz showing!!
 
 	PointCloud2: transform
 
+		Solved: <frameName>kinect_pc_frame</frameName> in minimal_robot_w_sensor.urdf need to be modified as
+			<frameName>kinect_sensor_frame</frameName>
+
 	
