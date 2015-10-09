@@ -1,13 +1,12 @@
 <?xml version="1.0"?>
 <package>
-  <name>joint2_controller</name>
+  <name>joints_controller</name>
   <version>0.0.0</version>
-  <description>The joint2_controller package</description>
+  <description>The joints_controller package</description>
 
   <maintainer email="peng.xu4@case.edu">Peng Xu</maintainer>
 
   <license>BSD</license>
-
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>catkin_simple</build_depend>

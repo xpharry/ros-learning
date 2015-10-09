@@ -18,9 +18,19 @@ operations:
 
 		check in gazebo
 
-	5. roslaunch joints_controller joints_controller.launch
+	5. rosrun joint1_controller joint1_controller
 
-	6. rqt_plot
+	*5.5. rostopic pub jnt1_pos_cmd std_msgs/Float64 0
+
+	6. rosrun joint2_commander joint2_commander
+
+	7. rosrun joint1_controller joint1_controller
+
+	*7.5. rostopic pub jnt1_pos_cmd std_msgs/Float64 0
+
+	8. rosrun joint2_commander joint2_commander
+
+	9. rqt_plot
 
 		check jnt1_pos_cmd & jnt1_pos_cmd ...
 	

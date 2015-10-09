@@ -1,0 +1,6 @@
+<launch> 
+<node name= "joint1_commander" pkg= "joints_controller" type= "joint1_commander" /> 
+<node name= "joint1_controller" pkg= "joints_controller" type= "joint1_controller" />
+<node name= "joint2_commander" pkg= "joints_controller" type= "joint2_commander" /> 
+<node name= "joint2_controller" pkg= "joints_controller" type= "joint2_controller" /> 
+</launch> 

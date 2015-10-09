@@ -6,9 +6,9 @@
 double PI = 3.1415926;
 
 int main(int argc, char **argv) {
-    ros::init(argc, argv, "joint1_commander"); // name of this node will be "minimal_"
+    ros::init(argc, argv, "joint2_commander"); // name of this node will be "minimal_"
     ros::NodeHandle n; // two lines to create a publisher object that can talk to ROS
-    ros::Publisher pub = n.advertise<std_msgs::Float64>("jnt1_pos_cmd", 1000); 
+    ros::Publisher pub = n.advertise<std_msgs::Float64>("jnt2_pos_cmd", 1000); 
     // the "1000" argument says to use a buffer size of 1000; could make larger, if expect network backups
     
     std_msgs::Float64 jnt1_position; //create a variable of type "Float64",
@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     // so subscribers know how to interpret the serialized data transmission
 
     double amplitude = 0.5;
-    double frequency = 5.0;
+    double frequency = 10.0;
     int i = 0;
    
    ros::Rate naptime(10.0); //create a ros object from the ros “Rate” class; 

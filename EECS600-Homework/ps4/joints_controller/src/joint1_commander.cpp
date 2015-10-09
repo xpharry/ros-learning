@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     // so subscribers know how to interpret the serialized data transmission
 
     double amplitude = 0.5;
-    double frequency = 5.0;
+    double frequency = 20.0;
     int i = 0;
    
    ros::Rate naptime(10.0); //create a ros object from the ros “Rate” class; 
