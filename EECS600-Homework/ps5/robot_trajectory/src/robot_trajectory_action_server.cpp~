@@ -2,7 +2,7 @@
 // accepts trajectory goals, interpolates between points linearly at specified dt
 // The velocity commands are ignored by this simple interpolator
 
-#include<ros/ros.h>
+#include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
 #include <example_trajectory/TrajActionAction.h>
 #include <std_msgs/Float64.h>
@@ -152,7 +152,7 @@ void TrajectoryActionServer::executeCB(const actionlib::SimpleActionServer<examp
     q_cmd_jnts = trajectory.points[npts-1].positions;
     send_joint_commands_(q_cmd_jnts);
     //should populate result with something useful...
-    as_.setSucceeded(result_); // tell the client that we were successful acting on the request, and return the "result" message
+         as_.setSucceeded(result_); // tell the client that we were successful acting on the request, and return the "result" message
 }
 
 //the main program instantiates a TrajectoryActionServer, then lets the callbacks do all the work
