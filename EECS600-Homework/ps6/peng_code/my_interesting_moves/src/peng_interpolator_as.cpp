@@ -1,14 +1,14 @@
 // wsn pgm to receive Baxter trajectories and interpolate them smoothly
 // as commands to Baxter;
 // right arm only, at present; June 1, 2015
-#include <my_interesting_moves/baxter_right_arm.h>
+#include <my_interesting_moves/my_interesting_moves.h>
 #include <actionlib/server/simple_action_server.h>
 
 //the following #include refers to the "action" message defined for this package
-// The action message can be found in: .../Baxter_right_arm/action/traj.action
+// The action message can be found in: .../my_interesting_moves/action/traj.action
 // Automated header generation creates multiple headers for message I/O
 // These are referred to by the root name (traj) and appended name (Action)
-#include<Baxter_right_arm/trajAction.h>
+#include <my_interesting_moves/trajAction.h>
 
 using namespace std;
 
@@ -83,14 +83,14 @@ private:
     ros::NodeHandle nh_; // we'll need a node handle; get one upon instantiation
 
     // this class will own a "SimpleActionServer" called "as_".
-    // it will communicate using messages defined in Baxter_right_arm/action/traj.action
+    // it will communicate using messages defined in my_interesting_moves/action/traj.action
     // the type "trajAction" is auto-generated from our name "traj" and generic name "Action"
-    actionlib::SimpleActionServer<Baxter_right_arm::trajAction> as_;
+    actionlib::SimpleActionServer<my_interesting_moves::trajAction> as_;
 
     // here are some message types to communicate with our client(s)
-    Baxter_right_arm::trajGoal goal_; // goal message, received from client
-    Baxter_right_arm::trajResult result_; // put results here, to be sent back to the client when done w/ goal
-    Baxter_right_arm::trajFeedback feedback_; // not used in this example; 
+    my_interesting_moves::trajGoal goal_; // goal message, received from client
+    my_interesting_moves::trajResult result_; // put results here, to be sent back to the client when done w/ goal
+    my_interesting_moves::trajFeedback feedback_; // not used in this example; 
     // would need to use: as_.publishFeedback(feedback_);
     baxter_core_msgs::JointCommand right_cmd, left_cmd;
     trajectory_msgs::JointTrajectory new_trajectory; // member var to receive new traj's;
@@ -103,7 +103,7 @@ public:
     ~trajActionServer(void) {
     }
     // Action Interface
-    void executeCB(const actionlib::SimpleActionServer<Baxter_right_arm::trajAction>::GoalConstPtr& goal);
+    void executeCB(const actionlib::SimpleActionServer<my_interesting_moves::trajAction>::GoalConstPtr& goal);
 };
 
 
@@ -162,7 +162,7 @@ void trajActionServer::cmd_pose_right(Vectorq7x1 qvec) {
 
 //this is where the bulk of the work is done, interpolating between potentially coarse joint-space poses
 // using the specified arrival times
-void trajActionServer::executeCB(const actionlib::SimpleActionServer<Baxter_right_arm::trajAction>::GoalConstPtr& goal) {
+void trajActionServer::executeCB(const actionlib::SimpleActionServer<my_interesting_moves::trajAction>::GoalConstPtr& goal) {
     double traj_clock, dt_segment, dq_segment, delta_q_segment, traj_final_time;
     int isegment;
     trajectory_msgs::JointTrajectoryPoint trajectory_point0;

@@ -70,7 +70,7 @@ include_directories(
   ##src/cwru_baxter/baxter_kinematics/src/baxter_kinematics.cpp
   ##${PROJECT_NAME}/src/baxter_kinematics.cpp
   ##${${PROJECT_NAME}_SRCS}
-  src/baxter_traj_streamer.cpp
+  src/my_interesting_moves.cpp
   ## src/${PROJECT_NAME}/baxter_kinematics.cpp
  )
 
@@ -80,9 +80,9 @@ add_executable(peng_action_client_pre_pose src/peng_action_client_pre_pose.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(peng_action_client_pre_pose baxter_right_arm_generate_messages_cpp)
-add_dependencies(peng_interpolator_as baxter_right_arm_generate_messages_cpp)
-add_dependencies(baxter_right_arm baxter_core_msgs_gencpp)
+add_dependencies(peng_action_client_pre_pose my_interesting_moves_generate_messages_cpp)
+add_dependencies(peng_interpolator_as my_interesting_moves_generate_messages_cpp)
+
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(baxter_traj_streamer_node
@@ -90,8 +90,8 @@ add_dependencies(baxter_right_arm baxter_core_msgs_gencpp)
 # )
 
 #list baxter_traj_streamer explicitly, because this library is in the current package
-target_link_libraries(peng_interpolator_as baxter_right_arm  ${catkin_LIBRARIES})
-target_link_libraries(peng_action_client_pre_pose baxter_right_arm ${catkin_LIBRARIES})
+target_link_libraries(peng_interpolator_as my_interesting_moves  ${catkin_LIBRARIES})
+target_link_libraries(peng_action_client_pre_pose my_interesting_moves ${catkin_LIBRARIES})
 
 #############
 ## Install ##
