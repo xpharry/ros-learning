@@ -1,0 +1,28 @@
+<launch>
+<!-- assume either baxter_gazebo or real baxter is running  /-->
+<!-- in either case, the robot model should be loaded on the parameter server before this launch file is run -->
+<!--include file ="$(find baxter_gazebo)/launch/baxter_world.launch"/-->
+  <!-- Load the URDF into the ROS Parameter Server -->
+  <!--param name="robot_description"
+	 command="cat '$(find cwru_baxter_sim)/cwru_baxter.urdf'" /-->
+<!-- robot_state_publisher is also loaded by real baxter...so do this in gazebo launch as well -->
+<!--node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/-->
+
+<!-- here are some cwru nodes -->
+<node pkg="reachability" type="reachability_from_above_v2" name="reachability_from_above_v2"/>
+<node pkg="baxter_traj_streamer" type="traj_interpolator_as" name="traj_interpolator_as"/>
+<node pkg="cartesian_moves" type="arm_motion_interface" name="arm_motion_interface"/>
+
+<node pkg="interactive_marker_node" type="interactive_marker_node" name="interactive_marker_node"/>
+<node pkg="coordinator" type="coordinator" name="coordinator"/>
+<!--node pkg="pcl_perception_node" type="pcl_perception_node2" name="pcl_perception_node"/-->
+<node pkg="pcl_perception_node" type="bed_of_nails_node" name="pcl_perception_node"/>
+
+<!-- tool transform publisher -->
+<include file ="$(find cwru_baxter_launch)/yale_gripper_xform.launch"/>
+<!-- set height from floor to Baxter base: -->
+<!--include file ="$(find cwru_baxter_launch)/floor_base_xform.launch"/-->
+<!-- publish Kinect transforms: -->
+<include file ="$(find cwru_baxter_launch)/kinect_transform.launch"/>
+
+</launch>

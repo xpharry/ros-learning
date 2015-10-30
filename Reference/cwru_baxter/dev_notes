@@ -1,0 +1,103 @@
+mantis_pose:
+name: ['head_nod', 'head_pan', 'left_e0', 'left_e1', 'left_s0', 'left_s1', 'left_w0', 'left_w1', 'left_w2', 'right_e0', 'right_e1', 'right_s0', 'right_s1', 'right_w0', 'right_w1', 'right_w2', 'torso_t0']
+position: [0.0, -0.015339807861328126, 
+0.18292720874633792, -0.050237870745849615, 0.5832961939270019, -1.291228326727295, -0.9203884716796875, 1.2352380280334474, -0.2672961519836426, 
+-1.2701360909179689, 0.1468786602722168, 0.22626216595458987, -1.2011069555419922, -2.741607160015869, -0.8655486585754395, 2.9421751478027347, 
+-12.565987104803467]
+
+simplified: (in order s0, s1, e0, e1, w0, w1, w2)
+left:  0.58, -1.29, 0.18, -0.05,  -0.92, 1.23, 0, 
+
+right: 0.23, -1.20, -1.27, 0.14,  -2.74, -0.87, 0,
+
+
+
+
+torso_t0: -12
+
+/robot/joint_states
+
+see: https://github.com/RethinkRobotics/sdk-docs/wiki/API-Reference
+
+display:
+rosrun baxter_examples xdisplay_image.py --file=yikes.jpg  (in wsn_test_baxter_cmd directory)
+
+/robot/limb/right/command_joint_position
+/robot/limb/left/joint_command
+/robot/limb/left/command_joint_position
+
+
+/robot/head/command_head_nod
+  	Type: std_msgs/Bool
+ (this is a binary command, which causes the head to nod once)
+rostopic pub /robot/head/command_head_nod std_msgs/Bool True
+
+/robot/head/command_head_pan
+ 	baxter_core_msgs/HeadPanCommand
+		float32 target
+		int32 speed
+e.g., to send the head to "0" (forward) angle:
+rostopic pub /robot/head/command_head_pan baxter_core_msgs/HeadPanCommand -- 0.0 100
+
+/robot/head/head_state
+	baxter_core_msgs/HeadState
+		float32 pan
+		bool isPanning
+		bool isNodding
+
+
+rosrun baxter_tools enable_robot.py -e
+
+---oddities w/ joint ranges:
+in simu, right-arm jnt limits found via entering values from wsn kbd interface (in rad)
+q_s0: -1.65: 1.65; 0 is 45deg fwd from iron cross
+q_s1: 1.1 (down) to -2.1 (beyond straight up); 0 is straight out
+q2: -3.1 to 3.1 
+q3 (elbow): 0 is straight out; 2.6 is max bend
+q4: -3.1 to 3.1
+q5: (wrist bend) -1.6 to 2.0
+q6: -3.1 to 3.1
+
+-----------6/14: create means to do sequence of moves for approach from above:
+
+create reachability template (start w/ reachability from above)
+  reachability_from_above_v2: 
+   shows right arm reach 
+   maybe good spot to wait: x,y,z = 0.4, -0.6, 0.4  (z=0.1 is top of can)
+   right-arm reach: min x ~ +0.3;
+   reach: to about x= 0.8
+
+   z = -0.5 is about lower limit for any reach from above;
+   table height (~1m) --> z = -0.14;
+   reachability at table height is fairly limited  e.g.
+   x = 0.7, -0.6 <= y <= 0.1
+   x = 0.6, -0.7 <= y <= 0.2
+   x = 0.5, -0.8 <= y <= 0.2 
+
+   can top is at about z = 0.1;
+   reachable from above (touch top of can) ranges:
+at z = 0.1:
+   x = 0.4 through x = 0.8;
+   at x = 0.8, y = -0.5 to 0.0
+   at x = 0.7, y = -0.7 to 0.2
+   at x = 0.6, y = -0.8 to 0.3
+   at x = 0.5, y = -0.9 to 0.3
+   at x = 0.4, y = -0.9 to 0.3
+doe not change sig. up to z = 0.4 (so descents should be OK)
+improve right-arm usefulness by shifting table to Baxter's right;
+also, move kinect further forward and tilt down more, to avoid interference from screen (face)
+
+adjusted Kinect mount: closest view is now x = 0.3 (at table height).
+ 
+
+  given presumption of approach along z, and given desired coords of flange frame,
+  plan and execute move from some initial safe pose-> approach pose--> descend --> depart --> return
+
+  start w/ hard-code, R points down, p=(0.4, -0.6, 0.4)->(0.5, 0, 0.4)->(0.5, 0, -0.14)->
+    (0.5, 0, 0.4)->(0.4, -0.6, 0.4)
+  fnc: Cart_path(Rdes,p_start,p_end,&optimal_path)
+  alt: Cart_path(q_start,p_end,&optimal_path)
+   
+
+
+

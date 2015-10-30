@@ -1,0 +1,15 @@
+#This action message must specify desired pose for gripper1, jaw opening for gripper1,
+# desired pose for gripper2, jaw opening for gripper 2, and desired duration of move (in sec)
+#goal:
+geometry_msgs/PoseStamped des_pose_gripper1
+geometry_msgs/PoseStamped des_pose_gripper2
+float64 gripper_jaw_angle1
+float64 gripper_jaw_angle2
+float64 move_time
+---
+#result definition
+int32 err_code
+string err_msg
+---
+#feedback: optional; 
+int32 fdbk

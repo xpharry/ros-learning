@@ -1,0 +1,67 @@
+\hypertarget{class_plane_fitter}{\section{Plane\-Fitter Class Reference}
+\label{class_plane_fitter}\index{Plane\-Fitter@{Plane\-Fitter}}
+}
+
+
+{\ttfamily \#include $<$plane\-\_\-fitter.\-h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{class_plane_fitter_ad514557574358e4ab362b0142f6cf7a2}{fit\-\_\-points\-\_\-to\-\_\-plane} (Eigen\-::\-Matrix\-Xd points\-\_\-array, Eigen\-::\-Vector3d \&plane\-\_\-normal, double \&plane\-\_\-dist)
+\item 
+void \hyperlink{class_plane_fitter_ab8a9e1573011da8e610c04f268dfc575}{generate\-\_\-planar\-\_\-points} (Eigen\-::\-Vector3d normal\-\_\-vec, double dist, int npts, double noise\-\_\-gain, Eigen\-::\-Matrix\-Xd \&points\-\_\-array)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+wsn; Oct, 2015. Include this file in \char`\"{}plane\-\_\-fitter.\-cpp\char`\"{}, and in any main that uses this library. This class provides a function to fit a plane to given set of (presumably) nearly-\/coplanar points 
+
+\subsection{Member Function Documentation}
+\hypertarget{class_plane_fitter_ad514557574358e4ab362b0142f6cf7a2}{\index{Plane\-Fitter@{Plane\-Fitter}!fit\-\_\-points\-\_\-to\-\_\-plane@{fit\-\_\-points\-\_\-to\-\_\-plane}}
+\index{fit\-\_\-points\-\_\-to\-\_\-plane@{fit\-\_\-points\-\_\-to\-\_\-plane}!PlaneFitter@{Plane\-Fitter}}
+\subsubsection[{fit\-\_\-points\-\_\-to\-\_\-plane}]{\setlength{\rightskip}{0pt plus 5cm}void Plane\-Fitter\-::fit\-\_\-points\-\_\-to\-\_\-plane (
+\begin{DoxyParamCaption}
+\item[{Eigen\-::\-Matrix\-Xd}]{points\-\_\-array, }
+\item[{Eigen\-::\-Vector3d \&}]{plane\-\_\-normal, }
+\item[{double \&}]{plane\-\_\-dist}
+\end{DoxyParamCaption}
+)}}\label{class_plane_fitter_ad514557574358e4ab362b0142f6cf7a2}
+provide an array of 3-\/\-D points (in columns), and this function will use and eigen-\/vector approach to find the best-\/fit plane It returns the plane's normal vector and the plane's (signed) distance from the origin. 
+\begin{DoxyParams}{Parameters}
+{\em points\-\_\-array} & input\-: points\-\_\-array is a matrix of 3-\/\-D points to be plane-\/fitted; coordinates are in columns \\
+\hline
+{\em plane\-\_\-normal} & output\-: this function will compute components of the plane normal here \\
+\hline
+{\em plane\-\_\-dist} & output\-: scalar (signed) distance of the plane from the origin \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_plane_fitter_ab8a9e1573011da8e610c04f268dfc575}{\index{Plane\-Fitter@{Plane\-Fitter}!generate\-\_\-planar\-\_\-points@{generate\-\_\-planar\-\_\-points}}
+\index{generate\-\_\-planar\-\_\-points@{generate\-\_\-planar\-\_\-points}!PlaneFitter@{Plane\-Fitter}}
+\subsubsection[{generate\-\_\-planar\-\_\-points}]{\setlength{\rightskip}{0pt plus 5cm}void Plane\-Fitter\-::generate\-\_\-planar\-\_\-points (
+\begin{DoxyParamCaption}
+\item[{Eigen\-::\-Vector3d}]{normal\-\_\-vec, }
+\item[{double}]{dist, }
+\item[{int}]{npts, }
+\item[{double}]{noise\-\_\-gain, }
+\item[{Eigen\-::\-Matrix\-Xd \&}]{points\-\_\-array}
+\end{DoxyParamCaption}
+)}}\label{class_plane_fitter_ab8a9e1573011da8e610c04f268dfc575}
+Function to generate a set of random points that are (nearly) co-\/planar. Useful for testing fit\-\_\-point\-\_\-to\-\_\-plane() fnc. Provide plane params, number of points desired, and scale of noise to add. Resulting points are returned in points\-\_\-array 
+\begin{DoxyParams}{Parameters}
+{\em normal\-\_\-vec} & \mbox{[}in\mbox{]} input\-: specify plane normal \\
+\hline
+{\em dist} & input\-: specify plane's (signed) distance from the origin \\
+\hline
+{\em npts} & input\-: specify number of desired points \\
+\hline
+{\em noise\-\_\-gain} & input\-: specify magnitude of noise (multiplier times noise in range \mbox{[}-\/1,1\mbox{]}) \\
+\hline
+{\em points\-\_\-array} & output\-: this array gets populated with the generated points \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+include/example\-\_\-ros\-\_\-library/plane\-\_\-fitter.\-h\end{DoxyCompactItemize}
