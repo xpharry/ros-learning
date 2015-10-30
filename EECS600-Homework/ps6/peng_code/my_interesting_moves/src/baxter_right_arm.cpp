@@ -1,8 +1,13 @@
 // wsn test pgm to command joint values to Baxter
 // accept keyboard commands
 //"include" path--should just be <baxter_kinematics/baxter_kinematics.h>, at least for modules outside this package
-#include <Baxter_right_arm/Baxter_right_arm.h>
-
+#include <my_interesting_moves/baxter_right_arm.h>
+#include <my_interesting_moves/trajAction.h>
+#include <ros/ros.h>
+#include <actionlib/client/simple_action_client.h>
+#include <actionlib/client/terminal_state.h>
+#include <iostream>
+using namespace std;
 //make these member vars of class
 vector<string> g_all_jnt_names; 
 vector<int> right_arm_joint_indices;
@@ -41,6 +46,7 @@ Baxter_right_arm::Baxter_right_arm(ros::NodeHandle* nodehandle){
     qdot_max_vec *=SPEED_SCALE_FACTOR;
 
     traj_interp_stat_client_ = nh_.serviceClient<cwru_srv::simple_bool_service_message>("trajInterpStatusSvc");
+
 }
 
 //member helper function to set up subscribers;
@@ -93,9 +99,10 @@ void Baxter_right_arm::jointStatesCb(const sensor_msgs::JointState& js_msg) {
 }  
 */
 void Baxter_right_arm::map_right_arm_joint_indices(vector<string> joint_names) {
-    //vector<string> joint_names = joint_state->name;
+ //vector<string> joint_names = joint_state->name;
     vector<string> rt_limb_jnt_names;
-    
+
+            
     right_arm_joint_indices.clear();
     int index;
     int n_jnts = joint_names.size();
@@ -119,18 +126,18 @@ void Baxter_right_arm::map_right_arm_joint_indices(vector<string> joint_names) {
     for (int j=0;j<7;j++) {
         j_name = rt_limb_jnt_names[j];
         for (int i=0;i<n_jnts;i++) {
-            if (j_name.compare(joint_names[i])==0) {
-                index = i;
-                right_arm_joint_indices.push_back(index);
-                break;
+        if (j_name.compare(joint_names[i])==0) {
+            index = i;
+            right_arm_joint_indices.push_back(index);
+            break;
             }
         }
-    }   
-    cout<<"indices of right-arm joints: "<<endl;
-    for (int i=0;i<7;i++) {
-        cout<<right_arm_joint_indices[i]<<", ";
-    }
-    cout<<endl;
+   }   
+   cout<<"indices of right-arm joints: "<<endl;
+   for (int i=0;i<7;i++) {
+       cout<<right_arm_joint_indices[i]<<", ";
+   }
+   cout<<endl;
 }
 
 
@@ -138,8 +145,8 @@ void Baxter_right_arm::map_right_arm_joint_indices(vector<string> joint_names) {
 void Baxter_right_arm::jointStatesCb(const sensor_msgs::JointState& js_msg) {
     joint_states_ = js_msg; // copy this to member var
     if (right_arm_joint_indices.size()<1) {
-        //g_all_jnt_names = js_msg.name;
-        map_right_arm_joint_indices(js_msg.name);
+       //g_all_jnt_names = js_msg.name;
+       map_right_arm_joint_indices(js_msg.name);
     }
     // copy right-arm angles to global vec
     for (int i=0;i<7;i++)
@@ -147,7 +154,8 @@ void Baxter_right_arm::jointStatesCb(const sensor_msgs::JointState& js_msg) {
         // should do this better; manually remap from joint_states indices to right-arm joint angles
         q_vec_right_arm_[i] = js_msg.position[right_arm_joint_indices[i]]; //w2         
     }
-    //cout<<"CB: q_vec_right_arm: "<<q_vec_right_arm_.transpose()<<endl;   
+    //cout<<"CB: q_vec_right_arm: "<<q_vec_right_arm_.transpose()<<endl;
+    
 }  
 
 Vectorq7x1 Baxter_right_arm::get_qvec_right_arm() {
@@ -179,7 +187,7 @@ double Baxter_right_arm::transition_time(Eigen::VectorXd dqvec) {
 //command robot to move to "qvec" using a trajectory message, sent via ROS-I
 //OBSOLETE:  USE ALT FNC BELOW
 void Baxter_right_arm::stuff_trajectory( std::vector<Vectorq7x1> qvecs, trajectory_msgs::JointTrajectory &new_trajectory) {
-    //new_trajectory.clear();
+    new_trajectory.points.clear();
     trajectory_msgs::JointTrajectoryPoint trajectory_point1;
     trajectory_msgs::JointTrajectoryPoint trajectory_point2; 
     
@@ -228,7 +236,7 @@ void Baxter_right_arm::stuff_trajectory( std::vector<Vectorq7x1> qvecs, trajecto
         for (int i=0;i<7;i++) { //pre-size these vectors, so can access w/ indices
             trajectory_point1.positions[i]=q_end[i];
         }    
-        trajectory_point1.time_from_start =    ros::Duration(net_time); 
+        trajectory_point1.time_from_start = ros::Duration(net_time); 
         new_trajectory.points.push_back(trajectory_point1);        
     }
 
@@ -242,7 +250,6 @@ void Baxter_right_arm::stuff_trajectory( std::vector<Eigen::VectorXd> qvecs, tra
     
     trajectory_point1.positions.clear(); 
     
-
     new_trajectory.points.clear(); // can clear components, but not entire trajectory_msgs
     new_trajectory.joint_names.clear(); 
     
@@ -257,20 +264,20 @@ void Baxter_right_arm::stuff_trajectory( std::vector<Eigen::VectorXd> qvecs, tra
     new_trajectory.header.stamp = ros::Time::now();  
     Eigen::VectorXd q_start,q_end,dqvec;
     double del_time;
-    double net_time = 0.0;
+    double net_time=0.0;
     q_start = qvecs[0];
     q_end = qvecs[0];   
     cout<<"stuff_traj: start pt = "<<q_start.transpose()<<endl; 
 
     //trajectory_point1.positions = qvecs[0];
-
+ 
     trajectory_point1.time_from_start = ros::Duration(net_time); 
     for (int i=0;i<7;i++) { //pre-sizes positions vector, so can access w/ indices later
         trajectory_point1.positions.push_back(q_start[i]);
     } 
     new_trajectory.points.push_back(trajectory_point1); // first point of the trajectory
     //add the rest of the points from qvecs
-
+   
 
     for (int iq=1;iq<qvecs.size();iq++) {
         q_start = q_end;
@@ -287,13 +294,14 @@ void Baxter_right_arm::stuff_trajectory( std::vector<Eigen::VectorXd> qvecs, tra
             trajectory_point1.positions[i]=q_end[i];
         }   
         //trajectory_point1.positions = q_end;
-        trajectory_point1.time_from_start = ros::Duration(net_time); 
+        trajectory_point1.time_from_start =    ros::Duration(net_time); 
         new_trajectory.points.push_back(trajectory_point1);        
     }        
+        
 }    
 
 // command a single pose: cmd_pose_right(Vectorq7x1 qvec );
-void Baxter_right_arm::cmd_pose_right(Vectorq7x1 qvec) {
+void Baxter_right_arm::cmd_pose_right(Vectorq7x1 qvec ) {
     //member var right_cmd_ already has joint names populated
     for (int i=0;i<7;i++) {
         right_cmd_.command[i]=qvec[i];
@@ -317,7 +325,7 @@ void Baxter_right_arm::pub_right_arm_trajectory_init() {
     stuff_trajectory(qvecs, new_trajectory);   
     bool working_on_traj=true;
     while (working_on_traj) {
-        traj_interp_stat_client_.call(traj_status_srv_); // communicate w/ trajectory interpolator node status service
+      traj_interp_stat_client_.call(traj_status_srv_); // communicate w/ trajectory interpolator node status service
         working_on_traj = traj_status_srv_.response.resp;
         cout<<"waiting for ready from interp node..."<<endl;
         ros::spinOnce();
@@ -325,14 +333,151 @@ void Baxter_right_arm::pub_right_arm_trajectory_init() {
     cout<<"interp node is ready for traj; sending"<<endl;
     working_on_traj=true;
 
+ 
     right_traj_pub_.publish(new_trajectory);
     cout<<"publishing trajectory with npts = "<<new_trajectory.points.size()<<endl;
     cout<<"cmd: "<<q_snapshot.transpose()<<endl;
-    ros::Duration(0.5).sleep(); // sleep for half a second
+     ros::Duration(0.5).sleep(); // sleep for half a second
     while(working_on_traj) {
-    traj_interp_stat_client_.call(traj_status_srv_); // communicate w/ trajectory interpolator node status service
-    working_on_traj = traj_status_srv_.response.resp;
-    cout<<"waiting for interp node to finish trajectory..."<<endl;
-    ros::spinOnce();       
-  }   
+      traj_interp_stat_client_.call(traj_status_srv_); // communicate w/ trajectory interpolator node status service
+        working_on_traj = traj_status_srv_.response.resp;
+        cout<<"waiting for interp node to finish trajectory..."<<endl;
+        ros::spinOnce();       
+    }   
+}
+
+// my code here
+void Baxter_right_arm::set_goal_salute(trajectory_msgs::JointTrajectory &des_trajectory) {
+    int g_count = 0;
+    Vectorq7x1 q_pre_pose;
+    Eigen::VectorXd q_in_vecxd;
+    Vectorq7x1 q_vec_right_arm;
+       
+    std::vector<Eigen::VectorXd> des_path;
+    // cout<<"creating des_path vector; enter 1:";
+    //cin>>ans;
+        
+    cout<<"instantiating a traj streamer"<<endl; // enter 1:";
+
+    cout<<"getting current right-arm pose:"<<endl;
+    ros::spinOnce();
+    q_vec_right_arm =  get_qvec_right_arm();  
+    cout<<"r_arm state:"<<q_vec_right_arm.transpose()<<endl;    
+    q_in_vecxd = q_vec_right_arm; // start from here;
+    des_path.push_back(q_in_vecxd); //put all zeros here
+
+    // double s0,s1,e0,e1,w0,w1,w2;
+    // std::cin>>s0>>s1>>e0>>e1>>w0>>w1>>w2;
+    // q_pre_pose<< s0, s1, e0, e1, w0, w1, w2; 
+    // // q_pre_pose<< -0.8, 0.6, 0, 0.6, 0, 0.6, 0;
+    // q_in_vecxd = q_pre_pose; // conversion; not sure why I needed to do this...but des_path.push_back(q_in_vecxd) likes it
+    // des_path.push_back(q_in_vecxd); //twice, to define a trajectory  
+    q_pre_pose<< -0.8, 0, 0, 0, 0, 0, 0;      
+    q_in_vecxd = q_pre_pose; // conversion; not sure why I needed to do this...but des_path.push_back(q_in_vecxd) likes it
+    des_path.push_back(q_in_vecxd); //twice, to define a trajectory 
+    q_pre_pose<< -0.8, 0, 3, 0, 0, 0, 0;      
+    q_in_vecxd = q_pre_pose; // conversion; not sure why I needed to do this...but des_path.push_back(q_in_vecxd) likes it
+    des_path.push_back(q_in_vecxd); //twice, to define a trajectory 
+    q_pre_pose<< -0.8, 0, 3, 2, 0, 0, 0;      
+    q_in_vecxd = q_pre_pose; // conversion; not sure why I needed to do this...but des_path.push_back(q_in_vecxd) likes it
+    des_path.push_back(q_in_vecxd); //twice, to define a trajectory 
+    q_pre_pose<< -0.8, 0, 3, 2, 0, 0.8, 0;      
+    q_in_vecxd = q_pre_pose; // conversion; not sure why I needed to do this...but des_path.push_back(q_in_vecxd) likes it
+    des_path.push_back(q_in_vecxd); //twice, to define a trajectory 
+    
+
+    cout << "stuffing traj: " << endl;
+    stuff_trajectory(des_path, des_trajectory); //convert from vector of 7dof poses to trajectory message        
+    // here is a "goal" object compatible with the server, as defined in example_action_server/action
+}
+
+void Baxter_right_arm::set_goal_wave(trajectory_msgs::JointTrajectory &des_trajectory) {
+    int g_count = 0;
+    Vectorq7x1 q_pre_pose;
+    Eigen::VectorXd q_in_vecxd;
+    Vectorq7x1 q_vec_right_arm;
+       
+    std::vector<Eigen::VectorXd> des_path;
+    // cout<<"creating des_path vector; enter 1:";
+    //cin>>ans;
+        
+    cout<<"instantiating a traj streamer"<<endl; // enter 1:";
+
+    cout<<"getting current right-arm pose:"<<endl;
+    q_vec_right_arm =  get_qvec_right_arm();  
+    cout<<"r_arm state:"<<q_vec_right_arm.transpose()<<endl;    
+    q_in_vecxd = q_vec_right_arm; // start from here;
+    des_path.push_back(q_in_vecxd); //put all zeros here
+
+    for(int i = 0; i < 3; i++) {
+        // -0.8 0 0 0 0 0 0
+        // -0.8 0.5 0 0 0 0 0
+        // -0.8 0 0 0.5 0 0 0
+        // -0.8 0 0 0 0 0.5 0
+        // -0.8 0 0 -0.3 0 0.5 0
+        // -0.8 0 0 -0.3 0 -0.5 0
+        // -0.8 -0.5 0 0.5 0 0 0
+        q_pre_pose<< -0.8, 0, 0, 0, 0, 0, 0;      
+        q_in_vecxd = q_pre_pose; // conversion; not sure why I needed to do this...but des_path.push_back(q_in_vecxd) likes it
+        des_path.push_back(q_in_vecxd); //twice, to define a trajectory 
+        q_pre_pose<< -0.8, 0.7, 0, 0, 0, 0, 0;      
+        q_in_vecxd = q_pre_pose; // conversion; not sure why I needed to do this...but des_path.push_back(q_in_vecxd) likes it
+        des_path.push_back(q_in_vecxd); //twice, to define a trajectory 
+        q_pre_pose<< -0.8, 0, 0, 0.7, 0, 0, 0;      
+        q_in_vecxd = q_pre_pose; // conversion; not sure why I needed to do this...but des_path.push_back(q_in_vecxd) likes it
+        des_path.push_back(q_in_vecxd); //twice, to define a trajectory 
+        q_pre_pose<< -0.8, 0, 0, 0, 0, 0.7, 0;      
+        q_in_vecxd = q_pre_pose; // conversion; not sure why I needed to do this...but des_path.push_back(q_in_vecxd) likes it
+        des_path.push_back(q_in_vecxd); //twice, to define a trajectory 
+        q_pre_pose<< -0.8, 0, 0, 0.7, 0, 0, 0;    
+        q_in_vecxd = q_pre_pose; // conversion; not sure why I needed to do this...but des_path.push_back(q_in_vecxd) likes it
+        des_path.push_back(q_in_vecxd); //twice, to define a trajectory 
+        q_pre_pose<< -0.8, 0.7, 0, 0, 0, 0, 0;     
+        q_in_vecxd = q_pre_pose; // conversion; not sure why I needed to do this...but des_path.push_back(q_in_vecxd) likes it
+        des_path.push_back(q_in_vecxd); //twice, to define a trajectory 
+    }
+
+    cout << "stuffing traj: " << endl;
+    stuff_trajectory(des_path, des_trajectory); //convert from vector of 7dof poses to trajectory message        
+    // here is a "goal" object compatible with the server, as defined in example_action_server/action
+}
+
+void Baxter_right_arm::set_goal_sayhi(trajectory_msgs::JointTrajectory &des_trajectory) {
+    int g_count = 0;
+    Vectorq7x1 q_pre_pose;
+    //q_in << 0, 0, 0, 0, 0, 0, 0;  
+    q_pre_pose<< -0.907528, -0.111813,   2.06622,    1.8737,    -1.295,   2.00164,  -2.87179;
+    //q_pre_pose<< 0, 0, 0, 0, 0, 0, 0;
+    Eigen::VectorXd q_in_vecxd;
+    Vectorq7x1 q_vec_right_arm;
+       
+    std::vector<Eigen::VectorXd> des_path;
+    // cout<<"creating des_path vector; enter 1:";
+    //cin>>ans;
+        
+    cout<<"instantiating a traj streamer"<<endl; // enter 1:";
+
+    cout<<"getting current right-arm pose:"<<endl;
+    ros::spinOnce();
+    q_vec_right_arm =  get_qvec_right_arm();  
+    cout<<"r_arm state:"<<q_vec_right_arm.transpose()<<endl;    
+    q_in_vecxd = q_vec_right_arm; // start from here;
+    des_path.push_back(q_in_vecxd); //put all zeros here
+
+    for(int i = 0; i < 3; i++) {
+        // -0.8 0 3 2 0 0 0
+        // -0.8 0 3 1.5 0 0 0
+        // -0.8 0 3 1 0 0 0
+        q_pre_pose<< -0.8, 0, 3, 2, 0, 0, 0;
+        q_in_vecxd = q_pre_pose; // conversion; not sure why I needed to do this...but des_path.push_back(q_in_vecxd) likes it
+        des_path.push_back(q_in_vecxd); //twice, to define a trajectory  
+        q_pre_pose<< -0.8, 0, 3, 1, 0, 0, 0;
+        q_in_vecxd = q_pre_pose; // conversion; not sure why I needed to do this...but des_path.push_back(q_in_vecxd) likes it
+        des_path.push_back(q_in_vecxd); //twice, to define a trajectory   
+    } 
+ 
+
+    cout << "stuffing traj: " << endl;
+    stuff_trajectory(des_path, des_trajectory); //convert from vector of 7dof poses to trajectory message        
+    // here is a "goal" object compatible with the server, as defined in example_action_server/action
 }

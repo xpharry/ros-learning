@@ -5,73 +5,36 @@
 #include <ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/client/terminal_state.h>
-#include <my_interesting_moves/Baxter_right_arm.h>
+#include <my_interesting_moves/baxter_right_arm.h>
 //this #include refers to the new "action" message defined for this package
-// the action message can be found in: .../Baxter_right_arm/action/traj.action
+// the action message can be found in: .../my_interesting_moves/action/traj.action
 // automated header generation creates multiple headers for message I/O
 // these are referred to by the root name (traj) and appended name (Action)
 // If you write a new client of the server in this package, you will need to include Baxter_right_arm in your package.xml,
 // and include the header file below
 #include <my_interesting_moves/trajAction.h>
+#include <iostream>
 using namespace std;
 #define VECTOR_DIM 7 // e.g., a 7-dof vector
 
 // This function will be called once when the goal completes
 // this is optional, but it is a convenient way to get access to the "result" message sent by the server
 void doneCb(const actionlib::SimpleClientGoalState& state,
-        const Baxter_right_arm::trajResultConstPtr& result) {
+        const my_interesting_moves::trajResultConstPtr& result) {
     ROS_INFO(" doneCb: server responded with state [%s]", state.toString().c_str());
     ROS_INFO("got return val = %d; traj_id = %d",result->return_val,result->traj_id);
 }
 
-
-int main(int argc, char** argv) {
-    ros::init(argc, argv, "traj_action_client_node"); // name this node 
-    ros::NodeHandle nh; //standard ros node handle        
+void sendCommand(trajectory_msgs::JointTrajectory &des_trajectory) {
     int g_count = 0;
-    int ans;
-    Vectorq7x1 q_pre_pose;
-    //q_in << 0, 0, 0, 0, 0, 0, 0;  
-    q_pre_pose<< -0.907528, -0.111813,   2.06622,    1.8737,    -1.295,   2.00164,  -2.87179;
-    Eigen::VectorXd q_in_vecxd;
-    Vectorq7x1 q_vec_right_arm;
-       
-  
-    std::vector<Eigen::VectorXd> des_path;
-    // cout<<"creating des_path vector; enter 1:";
-    //cin>>ans;
-        
-
-    trajectory_msgs::JointTrajectory des_trajectory; // an empty trajectory 
-    cout<<"instantiating a traj streamer"<<endl; // enter 1:";
-    //cin>>ans;
-    Baxter_right_arm Baxter_right_arm(&nh); //instantiate a Baxter_right_arm object and pass in pointer to nodehandle for constructor to use  
-    // warm up the joint-state callbacks;
-    cout<<"warming up callbacks..."<<endl;
-    for (int i=0;i<100;i++) {
-        ros::spinOnce();
-        //cout<<"spin "<<i<<endl;
-        ros::Duration(0.01).sleep();
-    }
-    cout<<"getting current right-arm pose:"<<endl;
-    q_vec_right_arm =  Baxter_right_arm.get_qvec_right_arm();  
-    cout<<"r_arm state:"<<q_vec_right_arm.transpose()<<endl;    
-    q_in_vecxd = q_vec_right_arm; // start from here;
-    des_path.push_back(q_in_vecxd); //put all zeros here
-    q_in_vecxd = q_pre_pose; // conversion; not sure why I needed to do this...but des_path.push_back(q_in_vecxd) likes it
-    des_path.push_back(q_in_vecxd); //twice, to define a trajectory  
-    
-
-    cout << "stuffing traj: " << endl;
-    Baxter_right_arm.stuff_trajectory(des_path, des_trajectory); //convert from vector of 7dof poses to trajectory message        
-    // here is a "goal" object compatible with the server, as defined in example_action_server/action
-    Baxter_right_arm::trajGoal goal; 
+     // here is a "goal" object compatible with the server, as defined in example_action_server/action
+    my_interesting_moves::trajGoal goal; 
     // does this work?  copy traj to goal:
     goal.trajectory = des_trajectory;
     //cout<<"ready to connect to action server; enter 1: ";
     //cin>>ans;
     // use the name of our server, which is: trajActionServer (named in traj_interpolator_as.cpp)
-    actionlib::SimpleActionClient<Baxter_right_arm::trajAction> action_client("trajActionServer", true);
+    actionlib::SimpleActionClient<my_interesting_moves::trajAction> action_client("trajActionServer", true);
     
     // attempt to connect to the server:
     ROS_INFO("waiting for server: ");
@@ -81,7 +44,7 @@ int main(int argc, char** argv) {
 
     if (!server_exists) {
         ROS_WARN("could not connect to server; will wait forever");
-        return 0; // bail out; optionally, could print a warning message and retry
+        return; // bail out; optionally, could print a warning message and retry
     }
     server_exists = action_client.waitForServer(); //wait forever 
     
@@ -101,14 +64,58 @@ int main(int argc, char** argv) {
     //bool finished_before_timeout = action_client.waitForResult(); // wait forever...
     if (!finished_before_timeout) {
         ROS_WARN("giving up waiting on result for goal number %d",g_count);
-        return 0;
+        return;
     }
     else {
         ROS_INFO("finished before timeout");
-    }
-    
-    //}
+    }   
+}
 
+
+int main(int argc, char** argv) {
+    ros::init(argc, argv, "traj_action_client_node"); // name this node 
+    ros::NodeHandle nh; //standard ros node handle        
+    int ans;
+
+    //cin>>ans;
+    Baxter_right_arm baxter_right_arm(&nh); //instantiate a Baxter_right_arm object and pass in pointer to nodehandle for constructor to use  
+    // warm up the joint-state callbacks;
+    cout<<"warming up callbacks..."<<endl;
+    for (int i=0;i<100;i++) {
+        ros::spinOnce();
+        //cout<<"spin "<<i<<endl;
+        ros::Duration(0.01).sleep();
+    }
+        
+    trajectory_msgs::JointTrajectory des_trajectory; // an empty trajectory 
+    
+
+    int i;
+    while(1) {
+        cout<<"Choose what you want Baxter do: 1: salute, 2: wave, 3: sayhi 0:quit"<<endl;
+        cout<<"Only type the according number"<<endl;
+        cin>>i;
+        switch(i) {
+            case 1:
+                baxter_right_arm.set_goal_salute(des_trajectory);
+                sendCommand(des_trajectory);
+                break;
+            case 2:
+                baxter_right_arm.set_goal_wave(des_trajectory);
+                sendCommand(des_trajectory);
+                break;
+            case 3:
+                baxter_right_arm.set_goal_sayhi(des_trajectory);
+                sendCommand(des_trajectory);
+                break;
+            case 0:
+                return 0; 
+            default:
+                cout<<"wrong input!"<<endl;
+                break;         
+        }
+        ros::Duration(0.5).sleep(); // sleep for half a second
+    }
     return 0;
 }
 

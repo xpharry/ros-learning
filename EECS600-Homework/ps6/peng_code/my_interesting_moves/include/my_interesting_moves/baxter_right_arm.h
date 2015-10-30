@@ -40,25 +40,25 @@ public:
     Baxter_right_arm(ros::NodeHandle* nodehandle); //"main" will need to instantiate a ROS nodehandle, then pass it to the constructor
     // may choose to define public methods or public variables, if desired
     void cmd_pose_right(Vectorq7x1 qvec );
-    void stuff_trajectory(std::vector<Vectorq7x1> qvecs, trajectory_msgs::JointTrajectory &new_trajectory);
-    void stuff_trajectory(std::vector<Eigen::VectorXd> qvecs, trajectory_msgs::JointTrajectory &new_trajectory);
+    void stuff_trajectory( std::vector<Vectorq7x1> qvecs, trajectory_msgs::JointTrajectory &new_trajectory);
+    void stuff_trajectory( std::vector<Eigen::VectorXd> qvecs, trajectory_msgs::JointTrajectory &new_trajectory);  
 
-    //functions that I created
-    void set_goal_salute(trajectory_msgs::JointTrajectory &des_trajectory);
-    
+    void set_goal_salute(trajectory_msgs::JointTrajectory &des_trajectory);  
+    void set_goal_wave(trajectory_msgs::JointTrajectory &des_trajectory);
+    void set_goal_sayhi(trajectory_msgs::JointTrajectory &des_trajectory); 
 
     void pub_right_arm_trajectory(trajectory_msgs::JointTrajectory &new_trajectory);
     Vectorq7x1 get_qvec_right_arm();  
     void pub_right_arm_trajectory_init();
-    sensor_msgs::JointState get_joint_states() {return joint_states_;}
-private:
+    sensor_msgs::JointState get_joint_states() { return joint_states_;}
+ private:
     // put private member data here;  "private" data will only be available to member functions of this class;
     ros::NodeHandle nh_; // we will need this, to pass between "main" and constructor
     // some objects to support subscriber, service, and publisher
     ros::Subscriber joint_state_sub_; //these will be set up within the class constructor, hiding these ugly details
     //ros::ServiceServer traj_interp_stat_client_;
     ros::ServiceClient traj_interp_stat_client_;
-    ros::Publisher  joint_cmd_pub_right_, joint_cmd_pub_left_;
+    ros::Publisher  joint_cmd_pub_right_,joint_cmd_pub_left_;
     ros::Publisher  right_traj_pub_;
         
     double val_from_subscriber_; //example member variable: better than using globals; convenient way to pass data from a subscriber to other member functions

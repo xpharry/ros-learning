@@ -7,7 +7,7 @@
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="peng@todo.todo">peng</maintainer>
+  <maintainer email="wyatt@todo.todo">wyatt</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/my_interesting_moves</url> -->
+  <!-- <url type="website">http://wiki.ros.org/baxter_traj_streamer</url> -->
 
 
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
@@ -32,7 +32,7 @@
   <!-- Dependencies can be catkin packages or system dependencies -->
   <!-- Examples: -->
   <!-- Use build_depend for packages you need at compile time: -->
-  <!--   <build_depend>message_generation</build_depend> -->
+ <build_depend>message_generation</build_depend> 
   <!-- Use buildtool_depend for build tool packages: -->
   <!--   <buildtool_depend>catkin</buildtool_depend> -->
   <!-- Use run_depend for packages you need at runtime: -->
@@ -40,13 +40,30 @@
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>cmake_modules</build_depend>
+  <build_depend>Eigen</build_depend>
+  <build_depend>baxter_core_msgs</build_depend>
   <build_depend>roscpp</build_depend>
+  <build_depend>sensor_msgs</build_depend>
   <build_depend>std_msgs</build_depend>
-  <run_depend>cmake_modules</run_depend>
+  <build_depend>trajectory_msgs</build_depend>
+    <build_depend>cwru_joint_space_planner</build_depend>
+  <build_depend>baxter_kinematics</build_depend>  
+   <build_depend>cwru_srv</build_depend>   
+ <build_depend>message_generation</build_depend>
+   <build_depend>actionlib_msgs</build_depend>
+   <build_depend>actionlib</build_depend>   
+  <run_depend>Eigen</run_depend>
+  <run_depend>baxter_core_msgs</run_depend>
   <run_depend>roscpp</run_depend>
+  <run_depend>sensor_msgs</run_depend>
   <run_depend>std_msgs</run_depend>
-
+  <run_depend>trajectory_msgs</run_depend>
+  <run_depend>cwru_joint_space_planner</run_depend>
+  <run_depend>baxter_kinematics</run_depend>
+  <run_depend>cwru_srv</run_depend>
+  <run_depend>message_runtime</run_depend>
+   <run_depend>actionlib_msgs</run_depend>    
+   <run_depend>actionlib</run_depend> 
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
