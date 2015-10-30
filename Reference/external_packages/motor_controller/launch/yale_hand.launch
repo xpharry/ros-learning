@@ -1,0 +1,4 @@
+<launch>
+<include file="$(find dynamixel_controllers)/launch/controller_manager.launch"/>
+<include file="$(find motor_controller)/launch/tilt_controller.launch"/>
+</launch>
