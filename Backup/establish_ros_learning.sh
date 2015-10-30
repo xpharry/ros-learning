@@ -1,14 +1,3 @@
-mkdir -p ~/ROS-learning/EECS600-Homework
-cd ~/ROS-learning/EECS600-Homework
-git clone https://github.com/xpharry/EECS600-Homework
-
-mkdir -p ~/ROS-learning/ROS-Exercises
-cd ~/ROS-learning/ROS-Exercises
-git clone https://github.com/xpharry/ROS-Exercises
-
-mkdir -p ~/ROS-learning/ROS-Documents
-cd ~/ROS-learning/ROS-Documents
-git clone https://github.com/xpharry/ROS-Documents
 
 mkdir -p ~/ROS-learning/Reference
 cd ~/ROS-learning/Reference

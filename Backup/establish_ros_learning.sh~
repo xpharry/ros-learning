@@ -22,7 +22,7 @@ git clone https://github.com/fairlight1337/ros_service_examples.git
 git clone https://github.com/ros/ros_tutorials.git
 
 mkdir -p ~/ROS-learning/Reference/rethink
-cd ~/ROS/Reference/rethink
-git clone https://github.com/RethinkRobotics/baxter_interface.git
-git clone https://github.com/RethinkRobotics/baxter_common.git
-git clone https://github.com/RethinkRobotics/baxter_tools.git
+cd ~/ROS-learning/Reference/rethink
+(cd ~/ROS-learning/Reference/rethink && git clone https://github.com/RethinkRobotics/baxter_interface.git)
+(cd ~/ROS-learning/Reference/rethink && git clone https://github.com/RethinkRobotics/baxter_common.git)
+(cd ~/ROS-learning/Reference/rethink && git clone https://github.com/RethinkRobotics/baxter_tools.git)
