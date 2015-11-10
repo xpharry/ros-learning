@@ -400,22 +400,22 @@ void My_interesting_moves::set_goal_wave(trajectory_msgs::JointTrajectory &des_t
         // -0.8 0 0 -0.3 0 0.5 0
         // -0.8 0 0 -0.3 0 -0.5 0
         // -0.8 -0.5 0 0.5 0 0 0
-        q_pre_pose<< -0.8, 0, 0, 0, 0, 0, 0;
+        q_pre_pose<< 0, 0, 0, 0, 0, 0, 0;
         q_in_vecxd = q_pre_pose;  // conversion;
         des_path.push_back(q_in_vecxd);  //twice, to define a trajectory
-        q_pre_pose<< -0.8, 0.7, 0, 0, 0, 0, 0;
+        q_pre_pose<< 0, 0.7, 0, 0, 0, 0, 0;
         q_in_vecxd = q_pre_pose;  // conversion;
         des_path.push_back(q_in_vecxd);  // twice, to define a trajectory
-        q_pre_pose<< -0.8, 0, 0, 0.7, 0, 0, 0;
+        q_pre_pose<< 0, 0, 0, 0.7, 0, 0, 0;
         q_in_vecxd = q_pre_pose;  // conversion;
         des_path.push_back(q_in_vecxd);  //twice, to define a trajectory
-        q_pre_pose<< -0.8, 0, 0, 0, 0, 0.7, 0;
+        q_pre_pose<< 0, 0, 0, 0, 0, 0.7, 0;
         q_in_vecxd = q_pre_pose;  // conversion;
         des_path.push_back(q_in_vecxd);  //twice, to define a trajectory
-        q_pre_pose<< -0.8, 0, 0, 0.7, 0, 0, 0;
+        q_pre_pose<< 0, 0, 0, 0.7, 0, 0, 0;
         q_in_vecxd = q_pre_pose;  // conversion;
         des_path.push_back(q_in_vecxd);  //twice, to define a trajectory
-        q_pre_pose<< -0.8, 0.7, 0, 0, 0, 0, 0;
+        q_pre_pose<< 0, 0.7, 0, 0, 0, 0, 0;
         q_in_vecxd = q_pre_pose;  // conversion;
         des_path.push_back(q_in_vecxd);  //twice, to define a trajectory
     }

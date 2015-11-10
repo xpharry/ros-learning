@@ -5,12 +5,12 @@
 #include <ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/client/terminal_state.h>
-#include <my_interesting_moves/baxter_right_arm.h>
+#include <my_interesting_moves/my_interesting_moves.h>
 //this #include refers to the new "action" message defined for this package
 // the action message can be found in: .../my_interesting_moves/action/traj.action
 // automated header generation creates multiple headers for message I/O
 // these are referred to by the root name (traj) and appended name (Action)
-// If you write a new client of the server in this package, you will need to include Baxter_right_arm in your package.xml,
+// If you write a new client of the server in this package, you will need to include my_interesting_moves in your package.xml,
 // and include the header file below
 #include <my_interesting_moves/trajAction.h>
 #include <iostream>
@@ -78,7 +78,7 @@ int main(int argc, char** argv) {
     int ans;
 
     //cin>>ans;
-    Baxter_right_arm baxter_right_arm(&nh); //instantiate a Baxter_right_arm object and pass in pointer to nodehandle for constructor to use  
+    My_interesting_moves my_interesting_moves(&nh); //instantiate a my_interesting_moves object and pass in pointer to nodehandle for constructor to use  
     // warm up the joint-state callbacks;
     cout<<"warming up callbacks..."<<endl;
     for (int i=0;i<100;i++) {
@@ -97,15 +97,15 @@ int main(int argc, char** argv) {
         cin>>i;
         switch(i) {
             case 1:
-                baxter_right_arm.set_goal_salute(des_trajectory);
+                my_interesting_moves.set_goal_salute(des_trajectory);
                 sendCommand(des_trajectory);
                 break;
             case 2:
-                baxter_right_arm.set_goal_wave(des_trajectory);
+                my_interesting_moves.set_goal_wave(des_trajectory);
                 sendCommand(des_trajectory);
                 break;
             case 3:
-                baxter_right_arm.set_goal_sayhi(des_trajectory);
+                my_interesting_moves.set_goal_sayhi(des_trajectory);
                 sendCommand(des_trajectory);
                 break;
             case 0:

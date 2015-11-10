@@ -1,11 +1,11 @@
 // wsn pgm to receive Baxter trajectories and interpolate them smoothly
 // as commands to Baxter;
 // right arm only, at present; June 1, 2015
-#include <my_interesting_moves/baxter_right_arm.h>
+#include <my_interesting_moves/my_interesting_moves.h>
 #include <actionlib/server/simple_action_server.h>
 
 //the following #include refers to the "action" message defined for this package
-// The action message can be found in: .../Baxter_right_arm/action/traj.action
+// The action message can be found in: .../my_interesting_moves/action/traj.action
 // Automated header generation creates multiple headers for message I/O
 // These are referred to by the root name (traj) and appended name (Action)
 #include <my_interesting_moves/trajAction.h>
@@ -83,7 +83,7 @@ private:
     ros::NodeHandle nh_; // we'll need a node handle; get one upon instantiation
 
     // this class will own a "SimpleActionServer" called "as_".
-    // it will communicate using messages defined in Baxter_right_arm/action/traj.action
+    // it will communicate using messages defined in my_interesting_moves/action/traj.action
     // the type "trajAction" is auto-generated from our name "traj" and generic name "Action"
     actionlib::SimpleActionServer<my_interesting_moves::trajAction> as_;
 

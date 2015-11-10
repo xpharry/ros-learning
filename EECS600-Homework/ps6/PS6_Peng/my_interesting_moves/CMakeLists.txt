@@ -70,7 +70,7 @@ include_directories(
   ##src/cwru_baxter/baxter_kinematics/src/baxter_kinematics.cpp
   ##${PROJECT_NAME}/src/baxter_kinematics.cpp
   ##${${PROJECT_NAME}_SRCS}
-  src/baxter_right_arm.cpp
+  src/my_interesting_moves.cpp
   ## src/${PROJECT_NAME}/baxter_kinematics.cpp
  )
 
