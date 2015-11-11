@@ -8,7 +8,11 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  cwru_pcl_utils
 )
+
+find_package(catkin_simple REQUIRED)
+find_package(cmake_modules REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -128,16 +132,16 @@ include_directories(
 # add_dependencies(show_baxter_facing ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-# add_executable(show_baxter_facing_node src/show_baxter_facing_node.cpp)
+add_executable(cloud_neighbor_finder src/cloud_neighbor_finder.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(show_baxter_facing_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(cloud_neighbor_finder ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(show_baxter_facing_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(cloud_neighbor_finder
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
@@ -154,7 +158,7 @@ include_directories(
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS show_baxter_facing show_baxter_facing_node
+# install(TARGETS show_baxter_facing cloud_neighbor_finder
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

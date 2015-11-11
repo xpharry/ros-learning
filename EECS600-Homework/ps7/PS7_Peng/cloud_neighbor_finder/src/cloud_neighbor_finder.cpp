@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     cwru_pcl_utils.save_kinect_snapshot();
 
     //set up a publisher to display clouds in rviz:
-    ros::Publisher pubCloud = nh.advertise<sensor_msgs::PointCloud2> ("/pcl_cloud_display", 1);
+    ros::Publisher pubCloud = nh.advertise<sensor_msgs::PointCloud2> ("/coplanar_cloud_display", 1);
     //pcl::PointCloud<pcl::PointXYZ> & outputCloud
     pcl::PointCloud<pcl::PointXYZ> display_cloud; // instantiate a pointcloud object, which will be used for display in rviz
     sensor_msgs::PointCloud2 pcl2_display_cloud; //(new sensor_msgs::PointCloud2); //corresponding data type for ROS message
@@ -78,7 +78,7 @@ int main(int argc, char** argv) {
             //here is a function to get a copy of the transformed, selected points;
             //cwru_pcl_utils.get_transformed_selected_points(display_cloud);
             //alternative: compute and get offset points from selected, transformed points
-            cwru_pcl_utils.example_pcl_operation(); // offset the transformed, selected points and put result in gen-purpose object
+            cwru_pcl_utils.extract_coplanar_pcl_operation(); // offset the transformed, selected points and put result in gen-purpose object
             cwru_pcl_utils.get_gen_purpose_cloud(display_cloud);
 
         }
@@ -86,6 +86,7 @@ int main(int argc, char** argv) {
         pcl::toROSMsg(display_cloud, pcl2_display_cloud); //convert datatype to compatible ROS message type for publication
         pcl2_display_cloud.header.stamp = ros::Time::now(); //update the time stamp, so rviz does not complain        
         pubCloud.publish(pcl2_display_cloud); //publish a point cloud that can be viewed in rviz (under topic pcl_cloud_display)
+        //ROS_INFO("plane with selected points displayed!");
 
         ros::Duration(0.5).sleep(); // sleep for half a second
         ros::spinOnce();
