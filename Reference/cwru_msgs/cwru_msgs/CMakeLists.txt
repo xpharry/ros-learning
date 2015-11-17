@@ -37,6 +37,7 @@ find_package(Boost REQUIRED COMPONENTS system)
    Path.msg
    PathSegment.msg
    VecOfDoubles.msg
+   PatchParams.msg
  )
 
 ## Generate services in the 'srv' folder
