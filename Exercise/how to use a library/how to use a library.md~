@@ -1,0 +1,6 @@
+in package.xml
+
+add
+
+  <build_depend>library_name</build_depend>
+  <run_depend>library_name</run_depend>
