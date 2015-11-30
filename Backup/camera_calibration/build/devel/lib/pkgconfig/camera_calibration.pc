@@ -1,0 +1,8 @@
+prefix=/home/matt/CWRU/ros_ws/src/baxter-model-scan/packages/camera_calibration/build/devel
+
+Name: camera_calibration
+Description: Description of camera_calibration
+Version: 0.0.0
+Cflags: -I/opt/ros/indigo/include -I/usr/include -I/usr/local/include/eigen3 -I/usr/local/include
+Libs: -L/home/matt/CWRU/ros_ws/src/baxter-model-scan/packages/camera_calibration/build/devel/lib 
+Requires: roscpp cmake_modules
